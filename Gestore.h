@@ -57,7 +57,7 @@ public:
 private:
     vector<Junior*> juniors;
     vector<Senior*> seniors;
-    vector<Progetto> progetti;
+    vector<Progetto*> progetti;
     
     map<string, Junior*> juniorMap;
     map<string, Senior*> seniorMap;

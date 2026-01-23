@@ -9,6 +9,9 @@ Gestore::~Gestore() {
     for (Senior* s : seniors) {
         delete s;
     }
+    for (Progetto* p : progetti) {
+        delete p;
+    }
 }
 
 // ============================================================================
@@ -70,10 +73,10 @@ void Gestore::aggiungiProgetto(string nome, string data, int durata,
     }
     
     // Create and store the project
-    progetti.push_back(Progetto(nome, data, durata, budget, respPtr));
+    progetti.push_back(new Progetto(nome, data, durata, budget, respPtr));
     
     // Add to lookup map
-    progettoMap[nome] = &progetti.back();
+    progettoMap[nome] = progetti.back();
 }
 
 vector<Dipendente*> Gestore::getDipendenti() const {
@@ -96,7 +99,7 @@ vector<Progetto*> Gestore::getProgetti() const {
     vector<Progetto*> result;
     
     for (size_t i = 0; i < progetti.size(); i++) {
-        result.push_back(const_cast<Progetto*>(&progetti[i]));
+        result.push_back(progetti[i]);
     }
     
     return result;
@@ -115,8 +118,8 @@ vector<Progetto*> Gestore::b1(string matricola) const {
     
     Senior* senior = it->second;
     for (size_t i = 0; i < progetti.size(); i++) {
-        if (progetti[i].getResponsabile() == senior) {
-            result.push_back(const_cast<Progetto*>(&progetti[i]));
+        if (progetti[i]->getResponsabile() == senior) {
+            result.push_back(progetti[i]);
         }
     }
     
@@ -133,11 +136,11 @@ vector<Progetto*> Gestore::b2(string matricola) const {
     Junior* junior = it->second;
     
     for (size_t i = 0; i < progetti.size(); i++) {
-        Senior* resp = progetti[i].getResponsabile();
+        Senior* resp = progetti[i]->getResponsabile();
         if (resp) {
             const vector<Junior*>& team = resp->getSubordinati();
             if (find(team.begin(), team.end(), junior) != team.end()) {
-                result.push_back(const_cast<Progetto*>(&progetti[i]));
+                result.push_back(progetti[i]);
             }
         }
     }
@@ -229,7 +232,7 @@ vector<Progetto*> Gestore::b6() const {
     vector<Progetto*> result;
     
     for (size_t i = 0; i < progetti.size(); i++) {
-        Senior* resp = progetti[i].getResponsabile();
+        Senior* resp = progetti[i]->getResponsabile();
         if (!resp) continue;
         
         const vector<Junior*>& team = resp->getSubordinati();
@@ -257,7 +260,7 @@ vector<Progetto*> Gestore::b6() const {
         }
         
         if (common.empty()) {
-            result.push_back(const_cast<Progetto*>(&progetti[i]));
+            result.push_back(progetti[i]);
         }
     }
     
@@ -400,10 +403,10 @@ vector<string> Gestore::c1() const {
     
     // For each project, add its budget to each skill of its participants
     for (size_t i = 0; i < progetti.size(); i++) {
-        Senior* resp = progetti[i].getResponsabile();
+        Senior* resp = progetti[i]->getResponsabile();
         if (!resp) continue;
         
-        double budget = progetti[i].getBudget();
+        double budget = progetti[i]->getBudget();
         
         // Collect unique skills in this project
         vector<string> projectSkills;
@@ -564,13 +567,13 @@ vector<Progetto*> Gestore::c4(string nomeProgetto) const {
     }
     
     for (size_t i = 0; i < progetti.size(); i++) {
-        if (&progetti[i] == target) continue;
+        if (progetti[i] == target) continue;
         
         // Calculate this project's end month/year
-        string date = progetti[i].getDataInizio();
+        string date = progetti[i]->getDataInizio();
         int year = stoi(date.substr(0, 4));
         int month = stoi(date.substr(5, 2));
-        month += progetti[i].getDurata();
+        month += progetti[i]->getDurata();
         while (month > 12) {
             month -= 12;
             year++;
@@ -580,7 +583,7 @@ vector<Progetto*> Gestore::c4(string nomeProgetto) const {
         if (year != targetYear || month != targetMonth) continue;
         
         // Get this project's skills
-        vector<string> skills = b3(progetti[i].getNome());
+        vector<string> skills = b3(progetti[i]->getNome());
         
         // Count common and different skills
         int common = 0;
@@ -595,7 +598,7 @@ vector<Progetto*> Gestore::c4(string nomeProgetto) const {
         
         // Similar if common >= 2 * notInCommon
         if (notInCommon == 0 || common >= 2 * notInCommon) {
-            result.push_back(const_cast<Progetto*>(&progetti[i]));
+            result.push_back(progetti[i]);
         }
     }
     
@@ -650,10 +653,10 @@ vector<pair<Dipendente*, Dipendente*>> Gestore::c5() const {
         vector<Progetto*> p1, p2;
         
         for (size_t i = 0; i < progetti.size(); i++) {
-            if (progetti[i].getResponsabile() == s1)
-                p1.push_back(const_cast<Progetto*>(&progetti[i]));
-            if (progetti[i].getResponsabile() == s2)
-                p2.push_back(const_cast<Progetto*>(&progetti[i]));
+            if (progetti[i]->getResponsabile() == s1)
+                p1.push_back(progetti[i]);
+            if (progetti[i]->getResponsabile() == s2)
+                p2.push_back(progetti[i]);
         }
         
         for (Progetto* a : p1) {
