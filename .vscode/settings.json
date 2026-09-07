@@ -1,5 +1,7 @@
 {
     "files.associations": {
         "stdexcept": "cpp"
-    }
+    },
+    "C_Cpp.default.compilerPath": "C:/msys64/mingw64/bin/g++.exe",
+    "cmake.sourceDirectory": "D:/Acc/GitHub hub/PO/progettoPO/generator/generator"
 }

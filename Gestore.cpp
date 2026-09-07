@@ -560,7 +560,7 @@ vector<Progetto*> Gestore::c4(string nomeProgetto) const {
     int targetMonth = stoi(targetDate.substr(5, 2));
     
     // Add duration months
-    targetMonth += target->getDurata();
+    targetMonth += target->getDurata() - 1;
     while (targetMonth > 12) {
         targetMonth -= 12;
         targetYear++;
@@ -573,7 +573,7 @@ vector<Progetto*> Gestore::c4(string nomeProgetto) const {
         string date = progetti[i]->getDataInizio();
         int year = stoi(date.substr(0, 4));
         int month = stoi(date.substr(5, 2));
-        month += progetti[i]->getDurata();
+        month += progetti[i]->getDurata() - 1;
         while (month > 12) {
             month -= 12;
             year++;
@@ -628,7 +628,7 @@ vector<pair<Dipendente*, Dipendente*>> Gestore::c5() const {
         string date = p->getDataInizio();
         int year = stoi(date.substr(0, 4));
         int month = stoi(date.substr(5, 2));
-        month += p->getDurata();
+        month += p->getDurata() - 1;
         while (month > 12) {
             month -= 12;
             year++;
